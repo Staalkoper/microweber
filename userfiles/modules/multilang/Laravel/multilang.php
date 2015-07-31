@@ -2,6 +2,7 @@
 
 use Closure;
 use DB;
+use Exception;
 use PDO;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Database\DatabaseManager as BaseManager;
@@ -55,12 +56,13 @@ trait MWQueryProcessing
 	public function select($query, $bindings = array(), $useReadPdo = true)
 	{
 		$result = null;
-		$callback = event_trigger('mw.database.before_select', ['query' => $query, 'bindings' => $bindings, 'result' => &$result]);
 		
-		if($callback !== false) {
+		try {
+			event_trigger('mw.database.before_select', ['query' => $query, 'bindings' => $bindings, 'result' => &$result]);
 			$result = parent::select($query, $bindings, $useReadPdo);
 		}
-		
+		catch(Exception $e) { }
+
 		event_trigger('mw.database.select', ['query' => $query, 'bindings' => $bindings, 'result' => &$result]);
 		return $result;
 	}
@@ -68,11 +70,12 @@ trait MWQueryProcessing
 	public function update($query, $bindings = array())
 	{
 		$result = null;
-		$callback = event_trigger('mw.database.before_update', ['query' => $query, 'bindings' => $bindings]);
-		var_dump($query, $callback);
-		if($callback !== false) {
+		
+		try {
+			event_trigger('mw.database.before_update', ['query' => $query, 'bindings' => $bindings]);
 			$result = parent::update($query, $bindings);
 		}
+		catch(Exception $e) { }
 		
 		event_trigger('mw.database.update', ['query' => $query, 'bindings' => $bindings]);
 		return $result;
@@ -81,11 +84,12 @@ trait MWQueryProcessing
 	public function insert($query, $bindings = array())
 	{
 		$result = null;
-		$callback = event_trigger('mw.database.before_insert', ['query' => $query, 'bindings' => $bindings]);
-	
-		if($callback !== false) {
+		
+		try {
+			event_trigger('mw.database.before_insert', ['query' => $query, 'bindings' => $bindings]);
 			$result = parent::insert($query, $bindings);
 		}
+		catch(Exception $e) { }
 		
 		event_trigger('mw.database.insert', ['query' => $query, 'bindings' => $bindings]);
 		return $result;

@@ -70,7 +70,7 @@ event_bind('mw.database.select', function($data) {
 });
 
 event_bind('mw.database.before_update', function($data) {
-  $store = app('mw.translator')->store($data['query'], $data['bindings']);
-  var_dump($store);
-  return !$store;
+  if( app('mw.translator')->store($data['query'], $data['bindings']) ) {
+    throw new \Exception('Intentional query execution cancelation.');
+  }
 });
