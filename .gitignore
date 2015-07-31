@@ -5,6 +5,7 @@ userfiles/css/
 userfiles/media/*
 userfiles/export/*
 storage/cache/*
+storage/logs/*
 old_mw/
 phpinfo.php
 .idea
