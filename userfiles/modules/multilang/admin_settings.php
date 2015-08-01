@@ -30,7 +30,7 @@
 		<td width="45%" valign="top">
 			<?php foreach(multilang_locales() as $lang): ?>
 			<div class="mw-ui-box mw-ui-box-content">
-				<a href="#" class="remove_lang mw-ui-btn mw-ui-btn-icon mw-ui-btn-small" data-lang="<?php echo $lang; ?>">
+				<a href="#" class="remove_lang pull-right" data-lang="<?php echo $lang; ?>">
 					<span class="mw-icon-close"></span>
 				</a>
 				<span class="mw-language-tag"><?php echo $lang; ?></span>

@@ -5,18 +5,16 @@
 <script type="text/javascript" src="<?php echo $config['url_to_module']; ?>langs.js"></script>
 <script type="text/javascript">mw.require('options.js');</script>
 <script type="text/javascript">
-
-$(document).ready(function() {
- mw.options.form('#<?php echo $params['id']; ?>', function() {
-   mw.notification.success("<?php _e("Settings are saved!"); ?>");
- });
-});
-
 function reload_after_save() {
   mw.reload_module("#<?php echo $params['id']; ?>");
   mw.reload_module_parent("#<?php echo $params['id']; ?>");
   mw.notification.success("<?php _e('Settings are saved!'); ?>");
 }
+
+$(document).ready(function() {
+mw.options.form('#<?php echo $params['id']; ?>', function() {
+ mw.notification.success("<?php _e("Settings are saved!"); ?>");
+});
 
 $('#default_lang').on('change', function() {
   $.post('/api/multilang_set_default', { lang: $(this).val() }, reload_after_save);
@@ -38,6 +36,10 @@ $('.remove_lang').click(function(e) {
 });
 
 for(var lk in MULTILANG_LOCALES) {
+  if(mw.ml_locales.indexOf(lk) >= 0) continue;
   $('#site_langs').append($('<option></option>').val(lk).text(MULTILANG_LOCALES[lk]));
 }
+});
+
+mw.ml_locales = ['<?php echo implode('\',\'', multilang_locales()); ?>'];
 </script>

@@ -40,7 +40,7 @@ foreach (multilang_locales() as $lang) {
 		<tr>
 			<td align="right">
 				<a href="<?php echo $item['url']; ?>"  target="_blank">
-					<?php echo str_limit($item['title'], 20); ?>
+					<?php echo str_limit($item['title'], 32); ?>
 				</a>
 			</td>
 			<?php foreach (multilang_locales() as $lang): ?>
