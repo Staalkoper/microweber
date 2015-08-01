@@ -10,22 +10,34 @@ class Translator {
 
 	public function __construct()
 	{
-		// TODO: no hardcoding
 		$this->translatableTables = [
-			'content' => ['title', 'content'],
-			'content_fields' => ['value']
+			'content' => ['title', 'content', 'content_meta_keywords', 'content_meta_title', 'description', 'content_body'],
+			'content_fields' => ['value'],
+			'custom_fields_values' => ['value'],
+			'content_fields_drafts' => ['value'],
+			'menus' => ['title'],
+			'categories' => ['title', 'description', 'content']
 		];
+	}
+
+	public function addTable($table)
+	{
+		if(!$table || !is_array($table) || !count($table)) return false;
+		$this->translatableTables[] = $table;
+		return true;
+	}
+
+	public function isDefaultLanguage() {
+		return app()->getLocale() == config('app.fallback_locale');
 	}
 
 	/* @return: whether the translation has been stored
 	*/
 	public function store($sql, $bindings)
 	{
-		$lang = app()->getLocale();
-		
-		if($lang == config('app.fallback_locale')) return false;
+		if($this->isDefaultLanguage()) return false;
 
-		$parser = app('mw.translator.sqlparser')->parse($sql);
+		$parser = app('mw.sqlparser')->parse($sql);
 		
 		$table = $parser->getTable();
 
@@ -50,7 +62,7 @@ class Translator {
 		$translation = DB::table($this->table)
 			->where('translatable_id', $id)
 			->where('translatable_type', $table)
-			->where('lang', $lang)
+			->where('lang', app()->getLocale())
 			->first();
 
 		if($translation)
@@ -80,7 +92,7 @@ class Translator {
 		else if($newTranslation)
 		{
 			$success = (bool) DB::table($this->table)->insert([
-				'lang' => $lang,
+				'lang' => app()->getLocale(),
 				'translatable_type' => $table,
 				'translatable_id' => $id,
 				'translation' => $newTranslation
@@ -94,9 +106,9 @@ class Translator {
 	*/
 	public function translate($sql, &$results)
 	{
-		if(app()->getLocale() == config('app.fallback_locale')) return;
+		if($this->isDefaultLanguage()) return;
 
-		$parser = app('mw.translator.sqlparser')->parse($sql);
+		$parser = app('mw.sqlparser')->parse($sql);
 		$table = $parser->getTable();
   
 		if (!in_array($table, array_keys($this->translatableTables))) return;

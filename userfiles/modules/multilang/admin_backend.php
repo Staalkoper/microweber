@@ -1,50 +1,58 @@
+<?php
+$content = collect(get_content())->groupBy('content_type');
+$translations = collect(DB::table('translations')->get());
+$translatedContent = array();
+
+foreach (multilang_locales() as $lang) {
+	$translatedContent[$lang] = $translations
+		->where('translatable_type', 'content')
+		->where('lang', $lang)
+		->lists('translatable_id');
+}
+
+?>
 <div class="mw-module-admin-wrap">
 
 	<module type="admin/modules/info" />
 
 	<?php require 'admin_settings.php'; ?>
 
-	<?php $translations = DB::table('translations')->get(); ?>
 
 	<h3>
 		Available Translations
-		(<?php echo count($translations); ?>)
+		(<?php echo $translations->count(); ?>)
 	</h3>
 
-	<table width="100%">
+	<?php foreach($content as $contentType => $content): ?>
+	<h4><?php echo ucfirst( str_plural($contentType) ); ?></h4>
+
+	<table class="mw-ui-table" style="text-align: center;">
 	<thead>
 		<tr>
-			<th width="100">Language</th>
-			<th width="100">Source ID</th>
-			<th width="100">Source Type</th>
-			<th>Translated Data</th>
+			<th width="30%">&nbsp;</th>
+			<?php foreach (multilang_locales() as $lang): ?>
+			<th class="mw-language-tag"><?php echo $lang; ?></th>
+			<?php endforeach; ?>
 		</tr>
 	<thead>
-	<?php if(count($translations)): ?>
-	<?php foreach($translations as $translation): ?>
+	<tbody>
+		<?php foreach ($content as $item): ?>
 		<tr>
-			<td valign="top">
-				<?php echo $translation->lang; ?>
-				<div class="mw-language-tag"><?php echo $translation->lang; ?></div>
-				<small>#<?php echo isset($translation->id) ? $translation->id : '?'; ?></small>
+			<td align="right">
+				<a href="<?php echo $item['url']; ?>"  target="_blank">
+					<?php echo str_limit($item['title'], 20); ?>
+				</a>
 			</td>
-			<td valign="top" align="center"><?php echo $translation->translatable_id; ?></td>
-			<td valign="top" align="center"><?php echo $translation->translatable_type; ?></td>
+			<?php foreach (multilang_locales() as $lang): ?>
 			<td>
-			<?php $json = json_decode($translation->translation); ?>
-			<?php if($json): ?>
-			<table width="100%" style="background: #eee">
-				<?php foreach($json as $key => $value): ?>
-				<tr>
-					<td width="100" valign="top"><b><?php echo $key; ?></b></td>
-					<td><?php echo '<b>['. strlen($value) . ']</b> ' . str_limit($value, 512); ?></td>
-				</tr>
-				<?php endforeach; ?>
-			</table>
-			<?php endif; ?>
+				<?php if($lang == config('app.fallback_locale') || in_array($item['id'], $translatedContent[$lang])): ?>
+				<span class="mw-icon mw-icon-check"></span>
+				<?php endif; ?>
 			</td>
+			<?php endforeach; ?>
 		</tr>
-	<?php endforeach; ?>
-	<?php endif; ?>
+		<?php endforeach; ?>
+	</tbody>
 	</table>
+	<?php endforeach; ?>
 </div>

@@ -195,6 +195,7 @@ $( "#content_type_filter_by_select" ).change(function() {
               </h2>
               <?php endif; ?>
             </div>
+            <?php mw()->event_manager->trigger('module.content.manager.toolbar.search', $page_info); ?>
             <div class="mw-ui-col">
               <div class="manage-toobar ">
                 <div class="manage-toobar-content">

@@ -30,6 +30,6 @@ class SqlParser {
 
 }
 
-app()->singleton('mw.translator.sqlparser', function() {
+app()->singleton('mw.sqlparser', function() {
   return new SqlParser;
 });

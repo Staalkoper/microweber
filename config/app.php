@@ -2,7 +2,7 @@
   'debug' => true,
   'url' => 'http://localhost',
   'timezone' => 'UTC',
-  'locale' => 'en',
+  'locale' => 'bg',
   'fallback_locale' => 'en',
   'key' => 'YourSecretKey!!!',
   'cipher' => 'rijndael-128',

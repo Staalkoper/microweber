@@ -58,6 +58,7 @@ function multilang_admin_ui() {
 }
 
 event_bind('mw.admin.before_toolbar', 'multilang_admin_ui');
+event_bind('module.content.manager.toolbar.search', 'multilang_admin_ui');
 event_bind('mw_admin_edit_page_tabs_nav', 'multilang_admin_ui');
 
 
